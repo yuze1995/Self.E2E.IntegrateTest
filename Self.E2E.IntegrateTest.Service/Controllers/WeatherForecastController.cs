@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Self.E2E.IntegrateTest.Service.Controllers;
 
@@ -11,11 +12,19 @@ public class WeatherForecastController : ControllerBase
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
+    private readonly Version _version;
     private readonly ILogger<WeatherForecastController> _logger;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    public WeatherForecastController(IOptions<Version> version, ILogger<WeatherForecastController> logger)
     {
+        _version = version.Value;
         _logger = logger;
+    }
+
+    [HttpGet("Version")]
+    public string Version()
+    {
+        return $"{_version.Prefix}{_version.Number}";
     }
 
     [HttpGet("True")]

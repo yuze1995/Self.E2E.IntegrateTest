@@ -1,11 +1,25 @@
+using Version = Self.E2E.IntegrateTest.Service.Version;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host
+    .ConfigureAppConfiguration((ctx, builder) =>
+    {
+        var env = ctx.HostingEnvironment;
+        builder.SetBasePath(env.ContentRootPath)
+            .AddJsonFile("appsettings.json", true, true)
+            .AddJsonFile($"appsettings.{env.EnvironmentName.Trim().ToLower()}.json", true, true)
+            .AddEnvironmentVariables();
+    });
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddOptions();
+builder.Services.Configure<Version>(builder.Configuration.GetSection("Version"));
 
 var app = builder.Build();
 
@@ -25,4 +39,6 @@ app.MapControllers();
 app.Run();
 
 
-public partial class Program { } // Used for self integrate test.
+public partial class Program
+{
+} // Used for self integrate test.
